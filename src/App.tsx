@@ -1,36 +1,36 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 
 import Layout from './components/layout/Layout';
+import ContactPage from './pages/ContactPage';
 import HomePage from './pages/HomePage';
+import MealDetailPage from './pages/MealDetailPage';
+import MealListingPage from './pages/MealListingPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-import MealListingPage from './pages/MealListingPage';
-import MealDetailPage from './pages/MealDetailPage';
-import TermsPage from './pages/legal/TermsPage';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
-import ContactPage from './pages/ContactPage';
+import TermsPage from './pages/legal/TermsPage';
 
 // Admin Pages
-import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLogin from './pages/admin/AdminLogin';
 
 // Vendor Pages
+import CreateMeal from './pages/vendor/CreateMeal';
+import EditMeal from './pages/vendor/EditMeal';
 import VendorDashboard from './pages/vendor/VendorDashboard';
 import VendorMeals from './pages/vendor/VendorMeals';
 import VendorOrders from './pages/vendor/VendorOrders';
 import VendorProfile from './pages/vendor/VendorProfile';
-import CreateMeal from './pages/vendor/CreateMeal';
-import EditMeal from './pages/vendor/EditMeal';
 
 // Consumer Pages
+import Checkout from './pages/consumer/Checkout';
 import ConsumerDashboard from './pages/consumer/ConsumerDashboard';
+import ConsumerFavorites from './pages/consumer/ConsumerFavorites';
 import ConsumerOrders from './pages/consumer/ConsumerOrders';
 import ConsumerProfile from './pages/consumer/ConsumerProfile';
-import ConsumerFavorites from './pages/consumer/ConsumerFavorites';
-import Checkout from './pages/consumer/Checkout';
 import OrderConfirmation from './pages/consumer/OrderConfirmation';
 
 // Protected Routes
