@@ -4,8 +4,8 @@ export type UserRole = 'consumer' | 'vendor' | 'admin';
 export interface User {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   role: UserRole;
   createdAt: string;
   avatar?: string;

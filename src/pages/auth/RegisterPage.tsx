@@ -1,8 +1,8 @@
+import { ArrowRight, CheckCircle, ChefHat, Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, ChefHat, CheckCircle, ArrowRight } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/common/Button';
+import { useAuth } from '../../contexts/AuthContext';
 import { UserRole } from '../../types';
 
 const RegisterPage: React.FC = () => {
@@ -27,6 +27,7 @@ const RegisterPage: React.FC = () => {
 
   const handleUserTypeSelect = (type: UserRole) => {
     setUserType(type);
+    debugger;
     setStep(2);
   };
 

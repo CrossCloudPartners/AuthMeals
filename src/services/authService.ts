@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { User, UserRole } from '../types';
+import apiService from './apiService';
 
 // This is a mock service that would interact with an API in a real application
 export const authService = {
@@ -14,8 +15,8 @@ export const authService = {
           const userData: User = {
             id: uuidv4(), // Generate a valid UUID
             email,
-            firstName: 'Demo',
-            lastName: 'User',
+            first_name: 'Demo',
+            last_name: 'User',
             role,
             createdAt: new Date().toISOString(),
           };
@@ -32,42 +33,36 @@ export const authService = {
   },
   
   async register(userData: any, role: UserRole): Promise<User> {
-    // Simulate API call
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          // Basic validation
-          if (!userData.email || !userData.password || !userData.firstName || !userData.lastName) {
-            throw new Error('All fields are required');
-          }
-          
-          if (userData.password.length < 8) {
-            throw new Error('Password must be at least 8 characters');
-          }
-          
-          if (userData.password !== userData.confirmPassword) {
-            throw new Error('Passwords do not match');
-          }
-          
-          // Create user object with UUID
-          const user: User = {
-            id: uuidv4(), // Generate a valid UUID
-            email: userData.email,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            role: role,
-            createdAt: new Date().toISOString(),
-          };
-          
-          // Store user data in localStorage
-          localStorage.setItem('authMealsUser', JSON.stringify(user));
-          
-          resolve(user);
-        } catch (error) {
-          reject(error);
-        }
-      }, 1000);
-    });
+    try {
+      // Basic validation
+      if (!userData.email || !userData.password || !userData.firstName || !userData.lastName) {
+        throw new Error('All fields are required');
+      }
+
+      if (userData.password.length < 8) {
+        throw new Error('Password must be at least 8 characters');
+      }
+
+      if (userData.password !== userData.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+      // Make an API call to register the user
+      const response = await apiService.post<User>('/auth/register', {
+        email: userData.email,
+        password: userData.password,
+        confirm_password: userData.confirmPassword,
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        role,
+      });
+      
+      // Store user data in localStorage
+      localStorage.setItem('authMealsUser', JSON.stringify(response ? (response as any).data : ''));
+
+      return response;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Registration failed');
+    }
   },
   
   async getCurrentUser(): Promise<User | null> {
@@ -80,7 +75,7 @@ export const authService = {
       }
 
       const user = JSON.parse(userData);
-      
+
       // Validate UUID format
       if (!user.id || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(user.id)) {
         // If the stored user has an invalid UUID, generate a new one

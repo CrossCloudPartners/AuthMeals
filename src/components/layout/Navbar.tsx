@@ -1,19 +1,18 @@
+import {
+  ChefHat,
+  Heart,
+  Home,
+  LogOut,
+  Menu,
+  Package,
+  Search,
+  ShoppingBag,
+  User
+} from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
-import {
-  Menu,
-  Search,
-  ShoppingBag,
-  LogOut,
-  User,
-  ChefHat,
-  Package,
-  Heart,
-  Settings,
-  Home
-} from 'lucide-react';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -93,7 +92,7 @@ const Navbar = () => {
                     ) : (
                       <div className="h-8 w-8 rounded-full bg-orange-200 flex items-center justify-center">
                         <span className="text-orange-700 font-medium">
-                          {user?.firstName ? user.firstName[0] : 'U'}
+                          {user?.first_name ? user.first_name[0] : 'U'}
                         </span>
                       </div>
                     )}
@@ -102,7 +101,7 @@ const Navbar = () => {
                   {isProfileOpen && (
                     <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <div className="px-4 py-2 text-xs text-gray-500 border-b">
-                        Signed in as <span className="font-medium">{user?.email}</span>
+                        Signed in as <span className="font-medium">{user?.first_name}</span>
                       </div>
                       <Link
                         to={user?.role === 'vendor' ? '/vendor/profile' : '/consumer/profile'}
