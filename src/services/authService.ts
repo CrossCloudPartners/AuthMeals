@@ -46,6 +46,7 @@ export const authService = {
       if (userData.password !== userData.confirmPassword) {
         throw new Error('Passwords do not match');
       }
+      debugger;
       // Make an API call to register the user
       const response = await apiService.post<User>('/auth/register', {
         email: userData.email,
@@ -55,9 +56,10 @@ export const authService = {
         last_name: userData.lastName,
         role,
       });
-      
+
       // Store user data in localStorage
       localStorage.setItem('authMealsUser', JSON.stringify(response ? (response as any).data : ''));
+      localStorage.setItem('authMealsUserTokens', JSON.stringify(response ? (response as any).tokens : ''));
 
       return response;
     } catch (error: any) {
