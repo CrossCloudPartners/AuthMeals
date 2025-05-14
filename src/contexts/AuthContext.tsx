@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, UserRole } from '../types';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { authService } from '../services/authService';
+import { User, UserRole } from '../types';
 
 interface AuthContextType {
   user: User | null;
@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       setError(null);
       const userData = await authService.login(email, password);
-      setUser(userData);
+      setUser(userData ? (userData as any).data : null);
     } catch (err) {
       setError((err as Error).message || 'Failed to login');
       throw err;

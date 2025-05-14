@@ -27,7 +27,6 @@ const RegisterPage: React.FC = () => {
 
   const handleUserTypeSelect = (type: UserRole) => {
     setUserType(type);
-    debugger;
     setStep(2);
   };
 

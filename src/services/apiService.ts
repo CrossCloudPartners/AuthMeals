@@ -50,6 +50,16 @@ class ApiService {
       throw new Error(error.response?.data?.message || 'POST request failed');
     }
   }
+
+  // DELETE request
+  public async delete<T>(url: string): Promise<T> {
+    try {
+      const response: AxiosResponse<T> = await this.apiClient.delete(url);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'DELETE request failed');
+    }
+  }
 }
 
 // Export an instance of the service with the base URL

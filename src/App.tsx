@@ -2,6 +2,7 @@ import { Toaster } from 'react-hot-toast';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import { MealProvider } from './contexts/MealContext';
 
 import Layout from './components/layout/Layout';
 import ContactPage from './pages/ContactPage';
@@ -40,42 +41,44 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Router>
-          <Layout>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/meals" element={<MealListingPage />} />
-              <Route path="/meals/:id" element={<MealDetailPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/contact" element={<ContactPage />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/*" element={<ProtectedRoute userType="admin"><AdminDashboard /></ProtectedRoute>} />
-              
-              {/* Vendor Routes */}
-              <Route path="/vendor" element={<ProtectedRoute userType="vendor"><VendorDashboard /></ProtectedRoute>} />
-              <Route path="/vendor/meals" element={<ProtectedRoute userType="vendor"><VendorMeals /></ProtectedRoute>} />
-              <Route path="/vendor/meals/create" element={<ProtectedRoute userType="vendor"><CreateMeal /></ProtectedRoute>} />
-              <Route path="/vendor/meals/:id/edit" element={<ProtectedRoute userType="vendor"><EditMeal /></ProtectedRoute>} />
-              <Route path="/vendor/orders" element={<ProtectedRoute userType="vendor"><VendorOrders /></ProtectedRoute>} />
-              <Route path="/vendor/profile" element={<ProtectedRoute userType="vendor"><VendorProfile /></ProtectedRoute>} />
-              
-              {/* Consumer Routes */}
-              <Route path="/consumer" element={<ProtectedRoute userType="consumer"><ConsumerDashboard /></ProtectedRoute>} />
-              <Route path="/consumer/orders" element={<ProtectedRoute userType="consumer"><ConsumerOrders /></ProtectedRoute>} />
-              <Route path="/consumer/profile" element={<ProtectedRoute userType="consumer"><ConsumerProfile /></ProtectedRoute>} />
-              <Route path="/consumer/favorites" element={<ProtectedRoute userType="consumer"><ConsumerFavorites /></ProtectedRoute>} />
-              <Route path="/checkout" element={<ProtectedRoute userType="consumer"><Checkout /></ProtectedRoute>} />
-              <Route path="/order-confirmation/:id" element={<ProtectedRoute userType="consumer"><OrderConfirmation /></ProtectedRoute>} />
-            </Routes>
-          </Layout>
-          <Toaster position="top-right" />
-        </Router>
+        <MealProvider>
+          <Router>
+            <Layout>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/meals" element={<MealListingPage />} />
+                <Route path="/meals/:id" element={<MealDetailPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/contact" element={<ContactPage />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin/*" element={<ProtectedRoute userType="admin"><AdminDashboard /></ProtectedRoute>} />
+                
+                {/* Vendor Routes */}
+                <Route path="/vendor" element={<ProtectedRoute userType="vendor"><VendorDashboard /></ProtectedRoute>} />
+                <Route path="/vendor/meals" element={<ProtectedRoute userType="vendor"><VendorMeals /></ProtectedRoute>} />
+                <Route path="/vendor/meals/create" element={<ProtectedRoute userType="vendor"><CreateMeal /></ProtectedRoute>} />
+                <Route path="/vendor/meals/:id/edit" element={<ProtectedRoute userType="vendor"><EditMeal /></ProtectedRoute>} />
+                <Route path="/vendor/orders" element={<ProtectedRoute userType="vendor"><VendorOrders /></ProtectedRoute>} />
+                <Route path="/vendor/profile" element={<ProtectedRoute userType="vendor"><VendorProfile /></ProtectedRoute>} />
+                
+                {/* Consumer Routes */}
+                <Route path="/consumer" element={<ProtectedRoute userType="consumer"><ConsumerDashboard /></ProtectedRoute>} />
+                <Route path="/consumer/orders" element={<ProtectedRoute userType="consumer"><ConsumerOrders /></ProtectedRoute>} />
+                <Route path="/consumer/profile" element={<ProtectedRoute userType="consumer"><ConsumerProfile /></ProtectedRoute>} />
+                <Route path="/consumer/favorites" element={<ProtectedRoute userType="consumer"><ConsumerFavorites /></ProtectedRoute>} />
+                <Route path="/checkout" element={<ProtectedRoute userType="consumer"><Checkout /></ProtectedRoute>} />
+                <Route path="/order-confirmation/:id" element={<ProtectedRoute userType="consumer"><OrderConfirmation /></ProtectedRoute>} />
+              </Routes>
+            </Layout>
+            <Toaster position="top-right" />
+          </Router>
+        </MealProvider>
       </CartProvider>
     </AuthProvider>
   );

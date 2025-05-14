@@ -36,46 +36,49 @@ export interface Vendor extends User {
 // Meal Types
 export interface Meal {
   id: string;
-  vendorId: string;
+  vendor_id: string;
   name: string;
   description: string;
   price: number;
+  preparation_time: number;
+  is_draft: boolean;
   images: string[];
-  cuisineType: string[];
-  dietaryInfo: DietaryInfo;
-  minOrderQuantity: number;
-  maxOrderQuantity?: number;
-  availability: Availability;
+  cuisine_type: string[];
+  calories?: number;
+  min_order_quantity: number;
+  max_order_quantity: number;
+  availability?: Availability[];
   rating: number;
-  reviewCount: number;
-  createdAt: string;
-  deliveryInfo?: DeliveryInfo;
+  review_count?: number;
+  created_at: string;
+  delivery_info?: DeliveryInfo;
+  dietary_info?: DietaryInfo;
 }
 
 export interface DietaryInfo {
-  isVegetarian: boolean;
-  isVegan: boolean;
-  isGlutenFree: boolean;
-  isDairyFree: boolean;
-  isNutFree: boolean;
-  isSpicy: boolean;
+  is_vegetarian: boolean;
+  is_vegan: boolean;
+  is_gluten_free: boolean;
+  is_dairy_free: boolean;
+  is_nut_free: boolean;
+  is_spicy: boolean;
   allergens: string[];
-  calories?: number;
+  calories: number;
 }
 
 export interface DeliveryInfo {
   radius: number;
   fee: number;
-  minimumOrder: number;
-  estimatedTime: string;
-  availableTimes: string[];
+  minimum_order: number;
+  estimated_time: string;
+  available_times: string[];
 }
 
 export interface Availability {
-  daysAvailable: string[]; // ['monday', 'tuesday', etc.]
-  startTime: string; // e.g., '09:00'
-  endTime: string; // e.g., '17:00'
-  availableDates?: string[]; // specific dates
+  days_available: string[]; // ['monday', 'tuesday', etc.]
+  start_time: string; // e.g., '09:00'
+  end_time: string; // e.g., '17:00'
+  available_dates?: string[]; // specific dates
 }
 
 // Order Types

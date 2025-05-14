@@ -1,32 +1,43 @@
-import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Image, Save, Upload, X } from 'lucide-react';
+import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Image, X, Plus, Save, Upload } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import { useMeal } from '../../contexts/MealContext';
+import { Meal } from '../../types';
 
 const CreateMeal = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    id: '',
+    vendor_id: '',
     name: '',
     description: '',
-    price: '',
-    preparationTime: '',
-    minOrderQuantity: '1',
-    maxOrderQuantity: '',
-    cuisineType: [],
+    price: 0,
+    preparation_time: 0,
+    minOrder_quantity: 1,
+    maxOrder_quantity: 1,
+    cuisine_type: [],
     images: [] as string[],
-    dietaryInfo: {
-      isVegetarian: false,
-      isVegan: false,
-      isGlutenFree: false,
-      isDairyFree: false,
-      isNutFree: false,
-      isSpicy: false,
+    dietary_info: {
+      is_vegetarian: false,
+      is_vegan: false,
+      is_gluten_free: false,
+      is_dairy_free: false,
+      is_nut_free: false,
+      is_spicy: false,
       allergens: [],
-      calories: ''
-    }
+      calories: 0,
+    },
+    min_order_quantity: 0,
+    max_order_quantity: 0,
+    availability: [],
+    rating: 0,
+    review_count: 0,
+    is_draft: true,
   });
   const [isDraft, setIsDraft] = useState(true);
+   const { addMeal, isLoading } = useMeal();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // In a real app, we would upload these files to storage
@@ -54,11 +65,45 @@ const CreateMeal = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Implement form submission
-    console.log('Form submitted:', formData);
-    navigate('/vendor/meals');
+  
+    try {
+      const mealData: Meal = {
+        id: formData.id,
+        vendor_id: formData.vendor_id,
+        name: formData.name,
+        description: formData.description,
+        price: formData.price,
+        preparation_time: formData.preparation_time,
+        is_draft: isDraft,
+        images: formData.images,
+        cuisine_type: formData.cuisine_type,
+        dietary_info: formData.dietary_info,
+        min_order_quantity: formData.min_order_quantity,
+        max_order_quantity: formData.max_order_quantity,
+        availability: formData.availability,
+        rating: formData.rating,
+        review_count: formData.review_count,
+        created_at: '',
+        delivery_info: {
+          radius: 0,
+          fee: 0,
+          minimum_order: 0,
+          estimated_time: '',
+          available_times: [],
+        },
+      };
+      debugger;
+      // Call the addMeal function from MealContext
+      await addMeal(mealData);
+      return;
+      // Navigate to the meals list page after successful creation
+      navigate('/vendor/meals');
+    } catch (error: any) {
+      console.error('Failed to create meal:', error.message || error);
+      alert(error.message || 'Failed to create meal');
+    }
   };
 
   return (
@@ -116,36 +161,36 @@ const CreateMeal = () => {
                   min="0"
                   step="0.01"
                   value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, price: !isNaN(Number(e.target.value)) ? parseFloat(e.target.value) : 0 })}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="minOrderQuantity" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="min_order_quantity" className="block text-sm font-medium text-gray-700">
                   Minimum Order *
                 </label>
                 <input
                   type="number"
-                  id="minOrderQuantity"
+                  id="min_order_quantity"
                   required
                   min="1"
-                  value={formData.minOrderQuantity}
-                  onChange={(e) => setFormData({ ...formData, minOrderQuantity: e.target.value })}
+                  value={formData.min_order_quantity}
+                  onChange={(e) => setFormData({ ...formData, min_order_quantity: !isNaN(Number(e.target.value)) ? parseFloat(e.target.value) : 0 })}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="maxOrderQuantity" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="max_order_quantity" className="block text-sm font-medium text-gray-700">
                   Maximum Order
                 </label>
                 <input
                   type="number"
-                  id="maxOrderQuantity"
+                  id="max_order_quantity"
                   min="1"
-                  value={formData.maxOrderQuantity}
-                  onChange={(e) => setFormData({ ...formData, maxOrderQuantity: e.target.value })}
+                  value={formData.max_order_quantity}
+                  onChange={(e) => setFormData({ ...formData, max_order_quantity: !isNaN(Number(e.target.value)) ? parseFloat(e.target.value) : 0 })}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500"
                 />
               </div>
@@ -202,12 +247,12 @@ const CreateMeal = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.dietaryInfo.isVegetarian}
+                  checked={formData.dietary_info.is_vegetarian}
                   onChange={(e) => setFormData({
                     ...formData,
-                    dietaryInfo: {
-                      ...formData.dietaryInfo,
-                      isVegetarian: e.target.checked
+                    dietary_info: {
+                      ...formData.dietary_info,
+                      is_vegetarian: e.target.checked
                     }
                   })}
                   className="rounded text-orange-500 focus:ring-orange-500"
@@ -218,12 +263,12 @@ const CreateMeal = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.dietaryInfo.isVegan}
+                checked={formData.dietary_info.is_vegan}
                   onChange={(e) => setFormData({
                     ...formData,
-                    dietaryInfo: {
-                      ...formData.dietaryInfo,
-                      isVegan: e.target.checked
+                    dietary_info: {
+                      ...formData.dietary_info,
+                      is_vegan: e.target.checked
                     }
                   })}
                   className="rounded text-orange-500 focus:ring-orange-500"
@@ -234,12 +279,12 @@ const CreateMeal = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.dietaryInfo.isGlutenFree}
+                  checked={formData.dietary_info.is_gluten_free}
                   onChange={(e) => setFormData({
                     ...formData,
-                    dietaryInfo: {
-                      ...formData.dietaryInfo,
-                      isGlutenFree: e.target.checked
+                    dietary_info: {
+                      ...formData.dietary_info,
+                      is_gluten_free: e.target.checked
                     }
                   })}
                   className="rounded text-orange-500 focus:ring-orange-500"
@@ -250,12 +295,12 @@ const CreateMeal = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.dietaryInfo.isDairyFree}
+                  checked={formData.dietary_info.is_dairy_free}
                   onChange={(e) => setFormData({
                     ...formData,
-                    dietaryInfo: {
-                      ...formData.dietaryInfo,
-                      isDairyFree: e.target.checked
+                    dietary_info: {
+                      ...formData.dietary_info,
+                      is_dairy_free: e.target.checked
                     }
                   })}
                   className="rounded text-orange-500 focus:ring-orange-500"
@@ -266,12 +311,12 @@ const CreateMeal = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.dietaryInfo.isNutFree}
+                  checked={formData.dietary_info.is_nut_free}
                   onChange={(e) => setFormData({
                     ...formData,
-                    dietaryInfo: {
-                      ...formData.dietaryInfo,
-                      isNutFree: e.target.checked
+                    dietary_info: {
+                      ...formData.dietary_info,
+                      is_nut_free: e.target.checked
                     }
                   })}
                   className="rounded text-orange-500 focus:ring-orange-500"
@@ -282,12 +327,12 @@ const CreateMeal = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.dietaryInfo.isSpicy}
+                  checked={formData.dietary_info.is_spicy}
                   onChange={(e) => setFormData({
                     ...formData,
-                    dietaryInfo: {
-                      ...formData.dietaryInfo,
-                      isSpicy: e.target.checked
+                    dietary_info: {
+                      ...formData.dietary_info,
+                      is_spicy: e.target.checked
                     }
                   })}
                   className="rounded text-orange-500 focus:ring-orange-500"
@@ -304,12 +349,12 @@ const CreateMeal = () => {
                 type="number"
                 id="calories"
                 min="0"
-                value={formData.dietaryInfo.calories}
+                value={formData.dietary_info.calories}
                 onChange={(e) => setFormData({
                   ...formData,
-                  dietaryInfo: {
-                    ...formData.dietaryInfo,
-                    calories: e.target.value
+                  dietary_info: {
+                    ...formData.dietary_info,
+                    calories: !isNaN(Number(e.target.value)) ? parseFloat(e.target.value) : 0
                   }
                 })}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500"
@@ -329,9 +374,9 @@ const CreateMeal = () => {
             <Button
               type="button"
               variant="secondary"
-              onClick={() => {
+              onClick={(e) => {
                 setIsDraft(true);
-                handleSubmit;
+                handleSubmit(e);
               }}
             >
               <Save className="h-5 w-5 mr-2" />

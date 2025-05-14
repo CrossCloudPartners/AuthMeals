@@ -6,30 +6,21 @@ import apiService from './apiService';
 export const authService = {
   async login(email: string, password: string): Promise<User> {
     // Simulate API call
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // For demo purposes, accept any email that ends with @test.com
-        if (email.endsWith('@test.com') && password.length >= 6) {
-          const role: UserRole = email.includes('vendor') ? 'vendor' : 'consumer';
-          
-          const userData: User = {
-            id: uuidv4(), // Generate a valid UUID
-            email,
-            first_name: 'Demo',
-            last_name: 'User',
-            role,
-            createdAt: new Date().toISOString(),
-          };
-          
-          // Store user data in localStorage (in a real app, store the token)
-          localStorage.setItem('authMealsUser', JSON.stringify(userData));
-          
-          resolve(userData);
-        } else {
-          reject(new Error('Invalid email or password'));
-        }
-      }, 1000);
-    });
+    try {
+      const response = await apiService.post<User>('/auth/login', {
+        email,
+        password,
+      });
+
+      // Store user data in localStorage (in a real app, store the token)
+      localStorage.setItem('authMealsUser', JSON.stringify(response ? (response as any).data : ''));
+      localStorage.setItem('authMealsUserTokens', JSON.stringify(response ? (response as any).tokens : ''));
+
+      return response;
+
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Registration fInvalid email or password');
+    }
   },
   
   async register(userData: any, role: UserRole): Promise<User> {
@@ -46,7 +37,7 @@ export const authService = {
       if (userData.password !== userData.confirmPassword) {
         throw new Error('Passwords do not match');
       }
-      debugger;
+
       // Make an API call to register the user
       const response = await apiService.post<User>('/auth/register', {
         email: userData.email,
