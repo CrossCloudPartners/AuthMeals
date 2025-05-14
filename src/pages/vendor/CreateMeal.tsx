@@ -1,5 +1,5 @@
 import { Image, Save, Upload, X } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
@@ -8,6 +8,7 @@ import { Meal } from '../../types';
 
 const CreateMeal = () => {
   const navigate = useNavigate();
+  const [vendorId, setVendorId] = useState<string | null>(null); // State to store vendor_id
   const [formData, setFormData] = useState({
     id: '',
     vendor_id: '',
@@ -37,7 +38,16 @@ const CreateMeal = () => {
     is_draft: true,
   });
   const [isDraft, setIsDraft] = useState(true);
-   const { addMeal, isLoading } = useMeal();
+  const { addMeal, isLoading } = useMeal();
+
+  // Fetch vendor_id from localStorage
+  useEffect(() => {
+    const userData = localStorage.getItem('authMealsUser');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setVendorId(user.uuid); // Set vendor_id from user info
+    }
+  }, []);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // In a real app, we would upload these files to storage
@@ -67,11 +77,16 @@ const CreateMeal = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
+    if (!vendorId) {
+      alert('Vendor ID is missing. Please log in again.');
+      return;
+    }
+
     try {
       const mealData: Meal = {
         id: formData.id,
-        vendor_id: formData.vendor_id,
+        vendor_id: vendorId,
         name: formData.name,
         description: formData.description,
         price: formData.price,
@@ -94,7 +109,7 @@ const CreateMeal = () => {
           available_times: [],
         },
       };
-      debugger;
+
       // Call the addMeal function from MealContext
       await addMeal(mealData);
       return;
@@ -188,6 +203,7 @@ const CreateMeal = () => {
                 <input
                   type="number"
                   id="max_order_quantity"
+                  required
                   min="1"
                   value={formData.max_order_quantity}
                   onChange={(e) => setFormData({ ...formData, max_order_quantity: !isNaN(Number(e.target.value)) ? parseFloat(e.target.value) : 0 })}
@@ -196,7 +212,6 @@ const CreateMeal = () => {
               </div>
             </div>
           </div>
-
           {/* Images */}
           <div className="space-y-4">
             <h2 className="text-lg font-medium text-gray-900">Images</h2>
@@ -391,6 +406,7 @@ const CreateMeal = () => {
               Publish
             </Button>
           </div>
+
         </form>
       </div>
     </div>

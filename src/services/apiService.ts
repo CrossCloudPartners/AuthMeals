@@ -15,11 +15,13 @@ class ApiService {
     // Add a request interceptor to include headers
     this.apiClient.interceptors.request.use(
       (config: AxiosRequestConfig) => {
-        const accessToken = localStorage.getItem('access_token');
-        if (accessToken) {
+        // const accessToken = localStorage.getItem('access_token');
+        const tokenData = localStorage.getItem('authMealsUserTokens');
+        const { access: { token } } = tokenData ? JSON.parse(tokenData) : null;
+        if (token) {
           config.headers = {
             ...config.headers,
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
             Accept: 'application/json',
           };
         }
