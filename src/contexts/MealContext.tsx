@@ -7,7 +7,7 @@ interface MealContextType {
   isLoading: boolean;
   error: string | null;
   fetchMeals: () => Promise<void>;
-  addMeal: (mealData: Meal) => Promise<void>;
+  addMeal: (mealData: FormData) => Promise<void>;
   deleteMeal: (mealId: string) => Promise<void>;
   clearError: () => void;
 }
@@ -44,7 +44,7 @@ export const MealProvider: React.FC<MealProviderProps> = ({ children }) => {
     }
   };
 
-  const addMeal = async (mealData: Meal) => {
+  const addMeal = async (mealData: FormData) => {
     try {
       setIsLoading(true);
       setError(null);

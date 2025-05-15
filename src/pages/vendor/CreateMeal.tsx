@@ -4,7 +4,6 @@ import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import { useMeal } from '../../contexts/MealContext';
-import { Meal } from '../../types';
 
 const CreateMeal = () => {
   const navigate = useNavigate();
@@ -20,6 +19,7 @@ const CreateMeal = () => {
     maxOrder_quantity: 1,
     cuisine_type: [],
     images: [] as string[],
+    uploadFiles: [] as any[],
     dietary_info: {
       is_vegetarian: false,
       is_vegan: false,
@@ -53,9 +53,22 @@ const CreateMeal = () => {
     // In a real app, we would upload these files to storage
     // For now, just create URLs for preview
     const newImages = acceptedFiles.map(file => URL.createObjectURL(file));
+    if(acceptedFiles.length > 0) {
+      acceptedFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFormData(prev => ({
+            ...prev,
+            uploadFiles: [...prev.uploadFiles, reader.result as string],
+          }));
+        }
+        reader.readAsDataURL(file);
+      });
+    }
     setFormData(prev => ({
       ...prev,
-      images: [...prev.images, ...newImages]
+      images: [...prev.images, ...newImages],
+      // uploadFiles: [...prev.uploadFiles, ...acceptedFiles]
     }));
   }, []);
 
@@ -84,34 +97,39 @@ const CreateMeal = () => {
     }
 
     try {
-      const mealData: Meal = {
-        id: formData.id,
-        vendor_id: vendorId,
-        name: formData.name,
-        description: formData.description,
-        price: formData.price,
-        preparation_time: formData.preparation_time,
-        is_draft: isDraft,
-        images: formData.images,
-        cuisine_type: formData.cuisine_type,
-        dietary_info: formData.dietary_info,
-        min_order_quantity: formData.min_order_quantity,
-        max_order_quantity: formData.max_order_quantity,
-        availability: formData.availability,
-        rating: formData.rating,
-        review_count: formData.review_count,
-        created_at: '',
-        delivery_info: {
+      debugger;
+      const postFormData = new FormData();
+      postFormData.append('id', formData.id);
+      postFormData.append('vendor_id', vendorId);
+      postFormData.append('name', formData.name);
+      postFormData.append('description', formData.description);
+      postFormData.append('price', formData.price?.toString());
+      postFormData.append('preparation_time', formData.preparation_time?.toString());
+      postFormData.append('is_draft', isDraft?.toString());
+      postFormData.append('cuisine_type', formData.cuisine_type?.toString());
+      postFormData.append('dietary_info', JSON.stringify(formData.dietary_info));
+      postFormData.append('min_order_quantity', formData.min_order_quantity?.toString());
+      postFormData.append('max_order_quantity', formData.max_order_quantity?.toString());
+      postFormData.append('availability', JSON.stringify(formData.availability || []));
+      postFormData.append('rating', formData.rating?.toString());
+      postFormData.append('review_count', formData.review_count?.toString());
+      postFormData.append('created_at', '');
+      postFormData.append('delivery_info', JSON.stringify(
+        { 
           radius: 0,
           fee: 0,
           minimum_order: 0,
           estimated_time: '',
           available_times: [],
-        },
-      };
+        })
+      );
+
+      if(formData.uploadFiles.length > 0) {
+        postFormData.append(`files`, JSON.stringify(formData.uploadFiles));
+      }
 
       // Call the addMeal function from MealContext
-      await addMeal(mealData);
+      await addMeal(postFormData);
       return;
       // Navigate to the meals list page after successful creation
       navigate('/vendor/meals');

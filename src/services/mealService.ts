@@ -6,8 +6,8 @@ const mealService = {
     return await apiService.get<Meal[]>('/meal');
   },
 
-  async addMeal(mealData: Meal): Promise<Meal> {
-    return await apiService.post<Meal>('/meal', mealData);
+  async addMeal(mealData: FormData): Promise<Meal> {
+    return await apiService.postForm<Meal>('/meal', mealData);
   },
 
   async deleteMeal(mealId: string): Promise<void> {

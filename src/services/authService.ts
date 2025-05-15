@@ -19,7 +19,7 @@ export const authService = {
       return response;
 
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Registration fInvalid email or password');
+      throw new Error(error.response?.data?.message || 'Registration Invalid email or password');
     }
   },
   
